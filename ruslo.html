@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F3EBDD">
+<title>Русло — мягкий заход в режим</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EBDD;
+    --paper-2:#EFE5D4;
+    --card:#FBF6EC;
+    --card-2:#F7F0E2;
+    --ink:#2C2722;
+    --ink-soft:#6B6256;
+    --ink-faint:#A39884;
+    --line:#E2D6C0;
+    --clay:#BC6A47;
+    --clay-soft:#D89274;
+    --sage:#7C8A66;
+    --sage-soft:#A6B38C;
+    --honey:#CC9544;
+    --honey-soft:#E6C079;
+    --shadow:0 1px 2px rgba(60,45,30,.04), 0 8px 24px rgba(80,55,30,.06);
+    --shadow-lg:0 2px 6px rgba(60,45,30,.06), 0 18px 40px rgba(80,55,30,.10);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink)}
+  body{
+    font-family:'Golos Text',system-ui,sans-serif;
+    font-size:16px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:96px;
+    overscroll-behavior-y:none;
+    background-image:radial-gradient(circle at 18% 8%, rgba(216,146,116,.07), transparent 42%),radial-gradient(circle at 88% 30%, rgba(124,138,102,.06), transparent 40%);
+    min-height:100vh;
+  }
+  h1,h2,h3,.disp{font-family:'Spectral',Georgia,serif;font-weight:500;letter-spacing:-.01em}
+  .wrap{max-width:560px;margin:0 auto;padding:0 18px}
+
+  /* Header */
+  header{padding:22px 0 8px;}
+  .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .brand .logo{font-family:'Spectral';font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .brand .logo b{color:var(--clay);font-weight:600}
+  .brand .tag{font-size:12px;color:var(--ink-faint);text-align:right;line-height:1.3;letter-spacing:.02em}
+
+  /* date strip */
+  .datestrip{display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:12px}
+  .datestrip .day{font-family:'Spectral';font-size:20px;font-weight:500;text-transform:capitalize}
+  .datestrip .sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .wkbadge{font-size:12px;font-weight:600;color:var(--clay);background:rgba(188,106,71,.10);border:1px solid rgba(188,106,71,.22);padding:6px 11px;border-radius:999px;white-space:nowrap}
+
+  /* hero ring */
+  .hero{background:linear-gradient(160deg,var(--card),var(--card-2));border:1px solid var(--line);border-radius:22px;padding:20px;margin-top:16px;box-shadow:var(--shadow);display:flex;gap:18px;align-items:center}
+  .ring{position:relative;width:104px;height:104px;flex:0 0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .pct{font-family:'Spectral';font-size:30px;font-weight:600;line-height:1}
+  .ring .pct small{font-size:14px;color:var(--ink-soft)}
+  .ring .cap{font-size:10.5px;color:var(--ink-faint);margin-top:1px;letter-spacing:.04em;text-transform:uppercase}
+  .hero .meta{flex:1}
+  .hero .meta .ht{font-family:'Spectral';font-size:18px;font-weight:500;margin-bottom:3px}
+  .hero .meta .hs{font-size:13px;color:var(--ink-soft);line-height:1.45}
+  .chips{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+  .chip{font-size:11.5px;padding:4px 9px;border-radius:999px;background:var(--paper-2);border:1px solid var(--line);color:var(--ink-soft)}
+  .chip.full{color:var(--sage);background:rgba(124,138,102,.10);border-color:rgba(124,138,102,.28)}
+  .chip.min{color:var(--honey);background:rgba(204,149,68,.10);border-color:rgba(204,149,68,.30)}
+
+  /* daytype toggle */
+  .daytype{display:flex;gap:8px;margin-top:14px}
+  .dt{flex:1;text-align:center;padding:11px 8px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:13.5px;font-weight:500;color:var(--ink-soft);transition:.18s;cursor:pointer}
+  .dt .e{font-size:16px;display:block;margin-bottom:2px}
+  .dt.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .dt.on.hard{background:var(--honey);border-color:var(--honey);color:#3a2c12}
+
+  .hardnote{font-size:12.5px;color:var(--honey);background:rgba(204,149,68,.08);border:1px dashed rgba(204,149,68,.35);border-radius:12px;padding:10px 12px;margin-top:12px;line-height:1.4;display:none}
+  .hardnote.show{display:block}
+
+  /* section label */
+  .sec{margin-top:26px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .sec h2{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-family:'Golos Text'}
+  .sec .ln{flex:1;height:1px;background:var(--line)}
+
+  /* anchor cards */
+  .anchor{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;margin-bottom:10px;box-shadow:var(--shadow);transition:.2s}
+  .anchor.done{background:linear-gradient(150deg,rgba(124,138,102,.10),var(--card));border-color:rgba(124,138,102,.32)}
+  .anchor.mind{background:linear-gradient(150deg,rgba(204,149,68,.10),var(--card));border-color:rgba(204,149,68,.34)}
+  .anchor .top{display:flex;gap:11px;align-items:flex-start}
+  .anchor .ic{width:34px;height:34px;flex:0 0 auto;border-radius:10px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-size:17px}
+  .anchor .body{flex:1;min-width:0}
+  .anchor .nm{font-family:'Spectral';font-size:16.5px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .anchor .tm{font-size:11px;font-weight:600;color:var(--clay);background:rgba(188,106,71,.09);padding:2px 7px;border-radius:6px}
+  .anchor .vv{font-size:13px;color:var(--ink-soft);margin-top:3px;line-height:1.4}
+  .anchor .mn{font-size:11.5px;color:var(--honey);margin-top:4px}
+  .anchor .mn b{font-weight:600}
+  .stat{display:flex;gap:7px;margin-top:11px}
+  .sbtn{flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);font-family:'Golos Text';font-size:12.5px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:.15s}
+  .sbtn .d{width:14px;height:14px}
+  .sbtn.on-full{background:var(--sage);border-color:var(--sage);color:#fff}
+  .sbtn.on-min{background:var(--honey);border-color:var(--honey);color:#3a2c12}
+  .sbtn.on-skip{background:var(--ink-faint);border-color:var(--ink-faint);color:#fff}
+
+  /* generic card */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .card h3{font-size:18px;margin-bottom:3px}
+  .card .csub{font-size:12.5px;color:var(--ink-soft);margin-bottom:12px}
+
+  /* program week */
+  .week{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:11px;background:var(--card);box-shadow:var(--shadow);transition:.2s}
+  .week.cur{border-color:var(--clay);background:linear-gradient(155deg,rgba(188,106,71,.07),var(--card));box-shadow:var(--shadow-lg)}
+  .week .wh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .week .wt{font-family:'Spectral';font-size:16.5px;font-weight:600}
+  .week .wn{font-size:13px;color:var(--ink-soft);margin-top:3px;line-height:1.4}
+  .week .now{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--clay);padding:3px 9px;border-radius:999px}
+  .week .hb{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .week .hb:last-child{border-bottom:none}
+  .week .hb .k{color:var(--ink-soft)}
+  .week .hb .v{text-align:right;font-weight:500}
+  .week .hblist{margin-top:8px}
+  .collapsed .hblist{display:none}
+  .week .more{font-size:12px;color:var(--clay);font-weight:600;margin-top:8px;display:inline-block}
+
+  table.tt{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  table.tt td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.tt tr:last-child td{border-bottom:none}
+  table.tt td.t{color:var(--clay);font-weight:600;white-space:nowrap;width:74px;font-variant-numeric:tabular-nums}
+  .pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .pill{font-size:12px;padding:5px 10px;border-radius:999px;background:var(--paper-2);border:1px solid var(--line)}
+  .pill.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* date editor */
+  .startbox{display:flex;align-items:center;gap:10px;background:var(--card-2);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:14px}
+  .startbox label{font-size:12.5px;color:var(--ink-soft);flex:1}
+  .startbox input{font-family:'Golos Text';font-size:14px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#fff;color:var(--ink)}
+
+  /* meals */
+  .meal{border:1px solid var(--line);border-radius:16px;margin-bottom:11px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .meal .mh{padding:14px;cursor:pointer;display:flex;align-items:center;gap:11px}
+  .meal .me{font-size:20px}
+  .meal .mtitle{flex:1}
+  .meal .mtitle .mn{font-family:'Spectral';font-size:16.5px;font-weight:600}
+  .meal .mtitle .mf{font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.35}
+  .meal .mtime{font-size:11.5px;font-weight:600;color:var(--clay);background:rgba(188,106,71,.09);padding:3px 8px;border-radius:7px;white-space:nowrap}
+  .meal .mbody{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s ease}
+  .meal.open .mbody{max-height:640px;padding:0 14px 14px}
+  .pickbtn{width:100%;margin-top:4px;margin-bottom:10px;padding:10px;border-radius:11px;border:1px dashed var(--clay-soft);background:rgba(188,106,71,.06);color:var(--clay);font-family:'Golos Text';font-weight:600;font-size:13px;cursor:pointer}
+  .vlist{list-style:none}
+  .vlist li{font-size:13.5px;padding:9px 0;border-top:1px solid var(--line);color:var(--ink);line-height:1.45;display:flex;gap:9px}
+  .vlist li .n{color:var(--clay-soft);font-weight:700;font-family:'Spectral';flex:0 0 auto}
+  .vlist li.hl{background:rgba(204,149,68,.12);border-radius:9px;padding:9px 9px;border-top:none;margin:4px 0}
+
+  /* groceries */
+  .gcat{margin-bottom:6px}
+  .gcat .gh{font-family:'Spectral';font-size:15px;font-weight:600;margin:14px 0 6px;display:flex;align-items:center;gap:8px}
+  .gcat .gh .ge{font-size:15px}
+  .gitem{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;background:var(--card);cursor:pointer;transition:.15s}
+  .gitem.ck{background:var(--paper-2);border-color:var(--line)}
+  .gitem.ck .gname{color:var(--ink-faint);text-decoration:line-through}
+  .gbox{width:21px;height:21px;border-radius:7px;border:2px solid var(--clay-soft);flex:0 0 auto;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .gitem.ck .gbox{background:var(--sage);border-color:var(--sage)}
+  .gbox svg{opacity:0;transition:.15s}
+  .gitem.ck .gbox svg{opacity:1}
+  .gname{font-size:14px;flex:1}
+  .gq{font-size:12px;color:var(--ink-faint)}
+
+  .note{font-size:13px;color:var(--ink-soft);line-height:1.5;background:var(--card-2);border:1px solid var(--line);border-left:3px solid var(--clay-soft);border-radius:0 12px 12px 0;padding:12px 14px;margin:14px 0}
+  .note b{color:var(--ink);font-weight:600}
+  .miniact{display:flex;gap:8px;margin-top:6px}
+  .miniact button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);font-family:'Golos Text';font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+
+  /* tabbar */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(247,240,226,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:space-around}
+  .tabbar .tb{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Golos Text';font-size:10.5px;font-weight:600;color:var(--ink-faint);cursor:pointer;padding:2px}
+  .tabbar .tb svg{width:23px;height:23px;stroke:var(--ink-faint);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:.15s}
+  .tabbar .tb.on{color:var(--clay)}
+  .tabbar .tb.on svg{stroke:var(--clay)}
+
+  .view{display:none;animation:fade .35s ease both}
+  .view.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .stagger>*{animation:fade .4s ease both}
+  .stagger>*:nth-child(1){animation-delay:.02s}.stagger>*:nth-child(2){animation-delay:.06s}
+  .stagger>*:nth-child(3){animation-delay:.10s}.stagger>*:nth-child(4){animation-delay:.14s}
+  .stagger>*:nth-child(5){animation-delay:.18s}.stagger>*:nth-child(6){animation-delay:.22s}
+  .stagger>*:nth-child(7){animation-delay:.26s}.stagger>*:nth-child(8){animation-delay:.30s}
+
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;transition:.3s;z-index:60;pointer-events:none;box-shadow:var(--shadow-lg)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .ftnote{text-align:center;font-size:11.5px;color:var(--ink-faint);padding:18px 10px 4px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">Рус<b>ло</b></div>
+      <div class="tag">мягкий заход<br>в режим · 6 недель</div>
+    </div>
+  </header>
+
+  <!-- ================= СЕГОДНЯ ================= -->
+  <section class="view on" id="view-today">
+    <div class="datestrip">
+      <div>
+        <div class="day" id="todayName">сегодня</div>
+        <div class="sub" id="todaySub"></div>
+      </div>
+      <div class="wkbadge" id="weekBadge">Неделя 1</div>
+    </div>
+
+    <div class="hero">
+      <div class="ring">
+        <svg width="104" height="104" viewBox="0 0 104 104">
+          <circle cx="52" cy="52" r="46" stroke="var(--line)" stroke-width="9" fill="none"/>
+          <circle id="ringFill" cx="52" cy="52" r="46" stroke="var(--sage)" stroke-width="9" fill="none"
+                  stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289"
+                  style="transition:stroke-dashoffset .6s ease"/>
+        </svg>
+        <div class="lbl">
+          <div class="pct" id="ringPct">0<small>%</small></div>
+          <div class="cap">ритм</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="ht" id="heroTitle">Доброе утро</div>
+        <div class="hs" id="heroSub">Сегодня держим каркас дня. Минимум — это не провал, а способ не сойти с ритма.</div>
+        <div class="chips" id="heroChips"></div>
+      </div>
+    </div>
+
+    <div class="daytype">
+      <div class="dt on" id="dtNormal" onclick="setDayType('normal')"><span class="e">☀️</span>Обычный день</div>
+      <div class="dt" id="dtHard" onclick="setDayType('hard')"><span class="e">🌥️</span>Тяжёлый день</div>
+    </div>
+    <div class="hardnote" id="hardNote">Сегодня цель — не идеальный день, а сохранённый ритм. Делай минимумы, остальное по желанию. Завтра вернёшься к полной версии.</div>
+
+    <div class="sec"><h2>Якоря дня</h2><div class="ln"></div></div>
+    <div id="anchors" class="stagger"></div>
+
+    <div class="note" id="dayTip"></div>
+  </section>
+
+  <!-- ================= ПРОГРАММА ================= -->
+  <section class="view" id="view-program">
+    <div class="datestrip" style="margin-top:22px">
+      <div><div class="day">Программа</div><div class="sub">путь к целевому режиму за 5–6 недель</div></div>
+    </div>
+
+    <div class="startbox" style="margin-top:16px">
+      <label>Старт программы<br><span id="startInfo" style="color:var(--clay);font-weight:600"></span></label>
+      <input type="date" id="startDate" onchange="changeStart(this.value)">
+    </div>
+
+    <div class="note">Главная идея — <b>не вводить всё сразу</b>. Это не «идеальный режим», а система, которая выдерживает обычную усталость. Каждую неделю добавляется только один слой.</div>
+
+    <div id="weeksList" class="stagger"></div>
+
+    <div class="sec"><h2>Целевой день</h2><div class="ln"></div></div>
+    <div class="card">
+      <h3 style="margin-bottom:10px">К чему идём</h3>
+      <table class="tt" id="targetTable"></table>
+    </div>
+
+    <div class="sec"><h2>Движение по дням</h2><div class="ln"></div></div>
+    <div class="card">
+      <div class="csub">Тренировка есть почти каждый день, но «тренируешься» ты не каждый день.</div>
+      <table class="tt" id="moveTable"></table>
+    </div>
+
+    <div class="sec"><h2>Минимумы на плохой день</h2><div class="ln"></div></div>
+    <div class="card">
+      <div class="csub">Зафиксируй заранее — это спасает ритм, когда нет сил.</div>
+      <table class="tt" id="minTable"></table>
+    </div>
+  </section>
+
+  <!-- ================= ЕДА ================= -->
+  <section class="view" id="view-food">
+    <div class="datestrip" style="margin-top:22px">
+      <div><div class="day">Еда</div><div class="sub">3 приёма + резервный перекус</div></div>
+    </div>
+
+    <div class="note" style="margin-top:16px">Еда без хаоса: <b>3 приёма по времени</b>, а резервный перекус — страховка, а не «срыв». Лучше маленький перекус, чем довести себя до сильного голода.</div>
+
+    <div class="sec"><h2>Время приёмов</h2><div class="ln"></div></div>
+    <div class="card"><table class="tt" id="mealTime"></table></div>
+
+    <div class="sec"><h2>Идеи на день</h2><div class="ln"></div></div>
+    <div id="mealsList"></div>
+
+    <div class="sec"><h2>Резервный перекус</h2><div class="ln"></div></div>
+    <div class="card">
+      <div class="csub">Нужен, если: тренировка натощак и слабость · большой голод до обеда · тянет на хаотичную еду · тревога/усталость · ужин позже обычного.</div>
+      <div class="gh" style="font-family:'Spectral';font-size:14px;font-weight:600;margin:4px 0 8px">Хорошие варианты</div>
+      <div class="pill-row" id="snackList"></div>
+      <button class="pickbtn" style="margin-top:12px;margin-bottom:0" onclick="pickSnack()">🎲 Подобрать перекус</button>
+      <div id="snackPick" style="font-size:14px;color:var(--clay);font-weight:600;text-align:center;margin-top:10px;display:none"></div>
+    </div>
+  </section>
+
+  <!-- ================= ПРОДУКТЫ ================= -->
+  <section class="view" id="view-shop">
+    <div class="datestrip" style="margin-top:22px">
+      <div><div class="day">Продукты</div><div class="sub" id="shopSub">список на неделю</div></div>
+    </div>
+
+    <div class="note" style="margin-top:16px">Продукты дома — не для «идеальной диеты», а чтобы в любой день можно было собрать нормальную еду за 5–10 минут и не провалиться в хаос.</div>
+
+    <div class="miniact">
+      <button onclick="checkAllShop()">✓ Отметить всё</button>
+      <button onclick="resetShop()">↺ Новый список</button>
+    </div>
+
+    <div id="shopList" style="margin-top:14px"></div>
+
+    <div class="sec"><h2>Готовка через день</h2><div class="ln"></div></div>
+    <div class="card">
+      <div class="csub">Готовь не блюда, а компоненты — сразу на 2 дня.</div>
+      <table class="tt" id="cookTable"></table>
+      <div class="note" style="margin:12px 0 0">Тогда еда собирается так: <b>завтрак</b> — лаваш/тост + индейка + овощи + соус · <b>обед</b> — крупа + белок + овощи · <b>ужин</b> — рыба/индейка + салат.</div>
+    </div>
+  </section>
+
+  <div class="ftnote">Прогресс хранится в этом браузере. Чтобы данные сохранялись — открой через ссылку (Netlify/GitHub Pages), а не как локальный файл.</div>
+</div>
+
+<!-- TABBAR -->
+<nav class="tabbar">
+  <button class="tb on" id="tab-today" onclick="show('today')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Сегодня</button>
+  <button class="tb" id="tab-program" onclick="show('program')">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>Программа</button>
+  <button class="tb" id="tab-food" onclick="show('food')">
+    <svg viewBox="0 0 24 24"><path d="M6 3v8a3 3 0 0 0 6 0V3M9 3v18"/><path d="M16 3c-1.5 1.5-2 3.5-2 6s.5 4 2 5v7"/></svg>Еда</button>
+  <button class="tb" id="tab-shop" onclick="show('shop')">
+    <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 11H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Продукты</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ ДАННЫЕ ИЗ ПЛАНА ============ */
+const WEEKDAYS=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+const WD_SHORT=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+const WEEKCFG={
+ 1:{wake:'6:45–7:00',study:'20–30 мин',studyMin:'20 мин',train:'2 раза в неделю',track1:'1× 20–30 мин',track2:null,snack:false,chore:'10 мин',sleep:'лечь до 23:30'},
+ 2:{wake:'6:30',study:'30–40 мин',studyMin:'20 мин',train:'2–3 раза в неделю в 8:30',track1:'1× 30 мин',track2:'10–15 мин, не каждый день',snack:false,chore:'10 мин',sleep:'23:15–23:30'},
+ 3:{wake:'6:15–6:30',study:'40–50 мин',studyMin:'20 мин',train:'3 раза в неделю',track1:'30 мин · 12:00',track2:'20 мин · 16:30',snack:false,chore:'10–15 мин',sleep:'ближе к 23:15'},
+ 4:{wake:'6:00–6:15',study:'45–60 мин',studyMin:'20 мин',train:'3 раза в неделю',track1:'30 мин · 12:00',track2:'30 мин · 16:30',snack:true,chore:'10–20 мин',sleep:'23:00–23:15'},
+ 5:{wake:'6:00–6:15',study:'45–60 мин',studyMin:'20 мин',train:'3 раза в неделю',track1:'30 мин · 12:00',track2:'30 мин · 16:30',snack:true,chore:'10–20 мин',sleep:'23:00–23:15'},
+ 6:{wake:'6:00–6:15',study:'45–60 мин',studyMin:'20 мин',train:'3 раза в неделю',track1:'30 мин · 12:00',track2:'30 мин · 16:30',snack:true,chore:'10–20 мин',sleep:'23:00–23:15'},
+ 7:{wake:'6:00',study:'45–60 мин',studyMin:'20 мин',train:'3 раза в неделю',track1:'30 мин · 12:00',track2:'30 мин · 16:30',snack:true,chore:'10–20 мин',sleep:'лечь в 23:00'}
+};
+
+const PROGRAM=[
+ {w:1,t:'Неделя 1 — только каркас',n:'Цель не внедрить всё, а показать мозгу новый ритм: утром учёба, днём движение, вечером спокойный быт.',
+  h:[['Подъём','6:45–7:00'],['Учёба','20–30 мин утром'],['Тренировка','2× в неделю по 25–35 мин'],['Дорожка','1× в день, 20–30 мин'],['Питание','3 приёма по времени'],['Быт','10 минут в день'],['Сон','лечь до 23:30']]},
+ {w:2,t:'Неделя 2 — тренировка утром',n:'Пробуешь схему: учёба утром → тренировка → завтрак → работа. Вторую дорожку пока не требуем.',
+  h:[['Подъём','6:30'],['Учёба','30–40 мин'],['Тренировка','2–3× в неделю в 8:30'],['Дорожка','1× 30 мин'],['Вторая дорожка','10–15 мин, не каждый день'],['Сон','23:15–23:30']]},
+ {w:3,t:'Неделя 3 — вторая дорожка',n:'Появляется почти целевой ритм, но вторая дорожка ещё может быть короче.',
+  h:[['Подъём','6:15–6:30'],['Учёба','40–50 мин'],['Тренировка','3× в неделю'],['Дорожка','12:00 — 30 мин'],['Вторая дорожка','16:30 — 20 мин'],['Сон','ближе к 23:15']]},
+ {w:4,t:'Неделя 4 — почти целевая схема',n:'Здесь уже можно жить почти по желаемому расписанию.',
+  h:[['Подъём','6:00–6:15'],['Учёба','45–60 мин'],['Тренировка','3× в неделю'],['Дорожка','2 раза по 30 мин'],['Питание','3 приёма + резервный перекус'],['Быт','10–20 мин'],['Сон','23:00–23:15']]},
+ {w:5,t:'Недели 5–6 — закрепление',n:'Ничего не добавлять. Не увеличивать тренировки, не делать учёбу дольше, не усложнять питание. Цель — чтобы режим перестал ощущаться как проект и стал обычным днём.',
+  h:[['Подъём','6:00–6:15'],['Учёба','45–60 мин'],['Тренировка','3× в неделю'],['Дорожка','2 раза по 30 мин'],['Питание','3 приёма + резервный перекус'],['Быт','10–20 мин'],['Сон','23:00–23:15']]}
+];
+
+const TARGET=[
+ ['06:00','подъём'],['06:05','вода, умывание, свет, лёгкий уход'],['06:20','учёба'],['07:20','пауза, сбор, лёгкий быт'],
+ ['08:10','резервный мини-перекус перед тренировкой, если нужен'],['08:30','тренировка'],['09:20','душ, уход'],['09:45','завтрак'],
+ ['10:00','работа'],['12:00','дорожка 1 · 30 мин'],['12:30','работа'],['14:00','обед'],['14:30','работа'],
+ ['16:30','дорожка 2 · 30 мин'],['17:00','работа'],['19:15','ужин'],['19:45','готовка через день / мини-уборка'],
+ ['20:15','отдых'],['22:15','вечерний ритуал'],['23:00','сон']
+];
+
+const WORKOUT={1:'Лёгкая силовая / пилатес',2:'Без тренировки или растяжка',3:'Лёгкая силовая',4:'Мобилити / растяжка',5:'Пилатес / лёгкая тренировка',6:'По желанию',0:'Восстановление, без обязательств'};
+const TRACKDAY={1:'2 × 30',2:'2 × 30',3:'2 × 30',4:'1–2 × 30',5:'2 × 30',6:'прогулка / дорожка',0:'без обязательств'};
+const CHORE={1:'Готовка на 2 дня',2:'Ванна / туалет — 15 минут',3:'Пыль или полы в одной зоне',4:'Готовка на 2 дня',5:'Глажка 15–20 минут',6:'Лёгкая уборка / кухня',0:'План еды и одежды на неделю'};
+
+const MINIMUMS=[['Учёба','20 минут','45–60 минут'],['Тренировка','15 минут растяжки','40–50 минут'],['Дорожка','1 × 20–30 минут','2 × 30 минут'],['Питание','3 приёма или 2 + перекус','3 приёма по плану'],['Быт','10 минут','20–30 минут'],['Сон','лечь до 23:30','лечь в 23:00']];
+
+const MEALTIME=[['08:10','опциональный мини-перекус перед тренировкой'],['09:45','завтрак'],['14:00','обед'],['19:15','ужин'],['по факту','резервный перекус, если нужно']];
+
+const MEALS={
+ breakfast:{e:'🌅',nm:'Завтрак',time:'09:45–10:00',f:'белок + сложные углеводы + немного жиров + фрукт/овощи',v:[
+  'Цельнозерновой тост/лаваш + индейка/курица + авокадо + овощи + кофе',
+  'Безлактозный йогурт + ягоды/фрукт + орехи/семена + тост с индейкой',
+  'Лаваш-ролл с курицей/индейкой, листьями салата, огурцом, соусом на безлактозном йогурте',
+  'Тосты с красной рыбой + овощи + фрукт',
+  'Сэндвич на цельнозерновом хлебе с индейкой + овощи + кофе с растительным молоком']},
+ lunch:{e:'🍽️',nm:'Обед',time:'14:00',f:'белок + крупа/паста/лаваш + овощи + немного масла/соуса',v:[
+  'Курица/индейка + рис/гречка/булгур + салат',
+  'Паста из твёрдых сортов + курица/лосось + овощи',
+  'Боул: рис/киноа/булгур + курица + огурец/помидор/перец/зелень + соус',
+  'Котлеты/тефтели из индейки + крупа + овощи',
+  'Лаваш/цельнозерновой хлеб + белок + овощи + хумус/авокадо']},
+ dinner:{e:'🌙',nm:'Ужин',time:'19:15',f:'белок + овощи + немного жиров',v:[
+  'Рыба + большой салат + оливковое масло/авокадо',
+  'Курица/индейка + овощной салат + соус на безлактозном йогурте',
+  'Лосось/белая рыба + огурцы, помидоры, листья салата, перец',
+  'Салат с индейкой: листья + огурец + помидор + авокадо + индейка',
+  'Запечённая рыба + овощи + кусочек цельнозернового хлеба']}
+};
+
+const SNACKS=['безлактозный йогурт','фрукт + орехи','протеиновый батончик','хлебец + индейка','банан перед тренировкой','яблоко / груша','морковь/огурец + хумус','хлеб с курицей'];
+
+const BASKET={
+ 'Белок':{e:'🍗',items:[['курица / индейка','1–1,5 кг'],['рыба','2–3 порции'],['нарезка индейки','1–2 уп.'],['безлактозный йогурт','4–6 порций'],['хумус','1 уп.'],['протеиновые батончики','3–5 шт.']]},
+ 'Углеводы':{e:'🌾',items:[['цельнозерновой хлеб / лаваш',''],['рис / гречка / булгур',''],['паста из твёрдых сортов',''],['хлебцы',''],['бананы','']]},
+ 'Овощи':{e:'🥗',items:[['огурцы',''],['помидоры',''],['листья салата',''],['перец',''],['морковь',''],['зелень',''],['замороженные овощи','без брокколи']]},
+ 'Фрукты / ягоды':{e:'🍓',items:[['яблоки / груши',''],['бананы',''],['ягоды','свежие/замор.']]},
+ 'Жиры / соусы':{e:'🫒',items:[['авокадо',''],['оливковое масло',''],['орехи',''],['семена',''],['лимон',''],['горчица',''],['соевый соус',''],['специи','']]}
+};
+
+const COOK=[['Белок','курица/индейка/рыба — на 2 дня'],['Гарнир','рис/гречка/булгур/паста'],['Овощи','нарезать свежие или запечь/разморозить'],['Соус','йогурт + горчица/лимон/специи']];
+
+/* ============ ХРАНИЛИЩЕ ============ */
+const LS='ruslo_v1';
+let store=load();
+function load(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(store))}catch(e){}}
+function todayKey(){return dayKey(new Date())}
+function dayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+if(!store.start){store.start=todayKey();save()}
+store.logs=store.logs||{};
+store.dayType=store.dayType||{};
+store.shop=store.shop||{};
+
+/* ============ НЕДЕЛЯ ПРОГРАММЫ ============ */
+function parseKey(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
+function daysBetween(a,b){const ms=864e5;const da=new Date(a.getFullYear(),a.getMonth(),a.getDate());const db=new Date(b.getFullYear(),b.getMonth(),b.getDate());return Math.round((db-da)/ms)}
+function currentWeek(){
+  const diff=daysBetween(parseKey(store.start),new Date());
+  if(diff<0)return 0; // старт в будущем
+  return Math.min(7,Math.floor(diff/7)+1);
+}
+function cfg(){return WEEKCFG[Math.max(1,currentWeek())]}
+
+/* ============ СЕГОДНЯ ============ */
+function buildAnchors(){
+  const c=cfg(),dow=new Date().getDay(),w=currentWeek();
+  const a=[];
+  a.push({id:'wake',ic:'🌤️',nm:'Подъём',tm:c.wake,vv:'Вода, умывание, свет, лёгкий уход',min:null});
+  a.push({id:'study',ic:'📚',nm:'Учёба',tm:'утро',vv:c.study,min:c.studyMin});
+  const restDay=(dow===0);
+  a.push({id:'train',ic:'🧘',nm:'Тренировка',tm:'8:30',vv:WORKOUT[dow]+(restDay?'':' · '+c.train),min:'15 минут растяжки'});
+  a.push({id:'track1',ic:'🚶‍♀️',nm:'Дорожка 1',tm:'12:00',vv:c.track1,min:'20–30 минут'});
+  if(c.track2)a.push({id:'track2',ic:'🚶‍♀️',nm:'Дорожка 2',tm:'16:30',vv:c.track2,min:'можно пропустить'});
+  a.push({id:'food',ic:'🍽️',nm:'Питание',tm:'3 приёма',vv:'Завтрак · обед · ужин по времени'+(c.snack?' + резервный перекус':''),min:'3 приёма или 2 + перекус'});
+  a.push({id:'chore',ic:'🧺',nm:'Быт',tm:c.chore,vv:CHORE[dow],min:'10 минут'});
+  a.push({id:'evening',ic:'🌙',nm:'Вечер и сон',tm:'22:15',vv:'Вечерний ритуал · '+c.sleep,min:'лечь до 23:30'});
+  return a;
+}
+
+function statusOf(id){const l=store.logs[todayKey()]||{};return l[id]||null}
+function setStatus(id,st){
+  const k=todayKey();store.logs[k]=store.logs[k]||{};
+  if(store.logs[k][id]===st)delete store.logs[k][id];else store.logs[k][id]=st;
+  save();renderToday();
+}
+
+function renderToday(){
+  const now=new Date(),dow=now.getDay(),w=currentWeek();
+  document.getElementById('todayName').textContent=WEEKDAYS[dow];
+  document.getElementById('todaySub').textContent=now.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+  document.getElementById('weekBadge').textContent= w===0?'Старт скоро': w>=7?'Целевой режим':'Неделя '+w;
+
+  // greeting
+  const h=now.getHours();
+  document.getElementById('heroTitle').textContent= h<11?'Доброе утро':h<17?'Добрый день':'Добрый вечер';
+
+  // daytype
+  const hard=store.dayType[todayKey()]==='hard';
+  document.getElementById('dtNormal').classList.toggle('on',!hard);
+  document.getElementById('dtHard').classList.toggle('on',hard);
+  document.getElementById('dtHard').classList.toggle('hard',hard);
+  document.getElementById('hardNote').classList.toggle('show',hard);
+
+  // anchors
+  const anchors=buildAnchors();
+  const box=document.getElementById('anchors');box.innerHTML='';
+  let full=0,min=0;
+  anchors.forEach(an=>{
+    const st=statusOf(an.id);
+    if(st==='full')full++;if(st==='min')min++;
+    const showMin=an.min&&(hard||true);
+    const el=document.createElement('div');
+    el.className='anchor'+(st==='full'?' done':st==='min'?' mind':'');
+    el.innerHTML=`
+      <div class="top">
+        <div class="ic">${an.ic}</div>
+        <div class="body">
+          <div class="nm">${an.nm}<span class="tm">${an.tm}</span></div>
+          <div class="vv">${an.vv}</div>
+          ${an.min?`<div class="mn">минимум: <b>${an.min}</b></div>`:''}
+        </div>
+      </div>
+      <div class="stat">
+        <div class="sbtn ${st==='full'?'on-full':''}" onclick="setStatus('${an.id}','full')">
+          <svg class="d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Полностью</div>
+        ${an.min?`<div class="sbtn ${st==='min'?'on-min':''}" onclick="setStatus('${an.id}','min')">◐ Минимум</div>`:''}
+        <div class="sbtn ${st==='skip'?'on-skip':''}" onclick="setStatus('${an.id}','skip')">– Пропуск</div>
+      </div>`;
+    box.appendChild(el);
+  });
+
+  // ring = ритм сохранён (full + min) / total
+  const total=anchors.length;
+  const kept=full+min;
+  const pct=Math.round(kept/total*100);
+  const circ=289;
+  document.getElementById('ringFill').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('ringPct').innerHTML=pct+'<small>%</small>';
+  document.getElementById('ringFill').setAttribute('stroke', pct===100?'var(--sage)':min>full?'var(--honey)':'var(--sage)');
+
+  document.getElementById('heroChips').innerHTML=
+    `<span class="chip full">✓ полностью ${full}</span>`+
+    `<span class="chip min">◐ минимум ${min}</span>`+
+    `<span class="chip">осталось ${total-kept}</span>`;
+
+  // hero sub + tip
+  const subEl=document.getElementById('heroSub');
+  if(kept===0)subEl.textContent='Начни с одного якоря. Не нужно делать всё сразу.';
+  else if(pct===100)subEl.textContent='Ритм сегодня сохранён целиком. Это и есть цель.';
+  else subEl.textContent='Ритм держится. Минимум засчитывается так же, как полная версия.';
+
+  // day tip by week
+  const tips={
+    1:'Эта неделя — только каркас. Не гонись за второй дорожкой и тренировкой каждый день. Достаточно: утром учёба, днём движение, вечером спокойный быт.',
+    2:'Пробуешь связку учёба → тренировка → завтрак → работа. Вторую дорожку добавляй коротко и не каждый день.',
+    3:'Почти целевой ритм. Вторая дорожка может быть короче — это нормально.',
+    4:'Можно жить почти по целевому расписанию. Не усложняй питание сверх плана.',
+    5:'Режим закрепляется. Ничего не добавляй — пусть он станет обычным днём, а не проектом.',
+    6:'Режим закрепляется. Ничего не добавляй — пусть он станет обычным днём, а не проектом.',
+    7:'Целевой режим. Держится на трёх вещах: утро для себя, еда без хаоса, вечер без героизма.'
+  };
+  document.getElementById('dayTip').innerHTML='<b>Неделя '+Math.max(1,w)+'.</b> '+tips[Math.max(1,w)];
+}
+
+function setDayType(t){
+  const k=todayKey();
+  store.dayType[k]= (store.dayType[k]===t)?'normal':t;
+  save();renderToday();
+  if(store.dayType[k]==='hard')toast('Сегодня бережём ритм, а не идеал 🌥️');
+}
+
+/* ============ ПРОГРАММА ============ */
+function renderProgram(){
+  const w=currentWeek();
+  document.getElementById('startDate').value=store.start;
+  const diff=daysBetween(parseKey(store.start),new Date());
+  const si=document.getElementById('startInfo');
+  if(diff<0)si.textContent='старт через '+(-diff)+' дн.';
+  else if(w>=7)si.textContent='целевой режим · '+(diff)+'-й день';
+  else si.textContent='идёт неделя '+w+' · '+(diff+1)+'-й день';
+
+  const list=document.getElementById('weeksList');list.innerHTML='';
+  PROGRAM.forEach(p=>{
+    const isCur=(w>=p.w && (p.w<5 ? w===p.w : w>=5));
+    const el=document.createElement('div');
+    el.className='week collapsed'+(isCur?' cur':'');
+    el.innerHTML=`
+      <div class="wh">
+        <div><div class="wt">${p.t}</div></div>
+        ${isCur?'<span class="now">сейчас</span>':''}
+      </div>
+      <div class="wn">${p.n}</div>
+      <div class="hblist">${p.h.map(x=>`<div class="hb"><span class="k">${x[0]}</span><span class="v">${x[1]}</span></div>`).join('')}</div>
+      <span class="more">показать привычки ▾</span>`;
+    el.querySelector('.more').onclick=()=>{
+      el.classList.toggle('collapsed');
+      el.querySelector('.more').textContent=el.classList.contains('collapsed')?'показать привычки ▾':'свернуть ▴';
+    };
+    if(isCur){el.classList.remove('collapsed');el.querySelector('.more').textContent='свернуть ▴';}
+    list.appendChild(el);
+  });
+
+  document.getElementById('targetTable').innerHTML=TARGET.map(r=>`<tr><td class="t">${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  document.getElementById('moveTable').innerHTML=[1,2,3,4,5,6,0].map(d=>`<tr><td class="t">${WD_SHORT[d]}</td><td>${WORKOUT[d]}<div style="color:var(--ink-faint);font-size:12px;margin-top:2px">дорожка: ${TRACKDAY[d]}</div></td></tr>`).join('');
+  document.getElementById('minTable').innerHTML=MINIMUMS.map(r=>`<tr><td>${r[0]}<div style="color:var(--honey);font-size:12px;margin-top:2px">мин: ${r[1]}</div></td><td style="text-align:right;color:var(--ink-soft)">${r[2]}</td></tr>`).join('');
+}
+
+function changeStart(v){if(!v)return;store.start=v;save();renderProgram();renderToday();toast('Старт обновлён')}
+
+/* ============ ЕДА ============ */
+function renderFood(){
+  document.getElementById('mealTime').innerHTML=MEALTIME.map(r=>`<tr><td class="t">${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  const box=document.getElementById('mealsList');box.innerHTML='';
+  Object.keys(MEALS).forEach(key=>{
+    const m=MEALS[key];
+    const el=document.createElement('div');el.className='meal';
+    el.innerHTML=`
+      <div class="mh" onclick="this.parentNode.classList.toggle('open')">
+        <div class="me">${m.e}</div>
+        <div class="mtitle"><div class="mn">${m.nm}</div><div class="mf">${m.f}</div></div>
+        <div class="mtime">${m.time}</div>
+      </div>
+      <div class="mbody">
+        <button class="pickbtn" onclick="event.stopPropagation();pickMeal('${key}',this)">🎲 Выбрать вариант</button>
+        <ul class="vlist">${m.v.map((v,i)=>`<li data-i="${i}"><span class="n">${i+1}</span><span>${v}</span></li>`).join('')}</ul>
+      </div>`;
+    box.appendChild(el);
+  });
+  document.getElementById('snackList').innerHTML=SNACKS.map(s=>`<span class="pill">${s}</span>`).join('');
+}
+function pickMeal(key,btn){
+  const m=MEALS[key],i=Math.floor(Math.random()*m.v.length);
+  const ul=btn.parentNode.querySelector('.vlist');
+  ul.querySelectorAll('li').forEach(li=>li.classList.toggle('hl',+li.dataset.i===i));
+  toast(m.nm+': вариант '+(i+1));
+}
+function pickSnack(){
+  const s=SNACKS[Math.floor(Math.random()*SNACKS.length)];
+  const el=document.getElementById('snackPick');el.style.display='block';el.textContent='→ '+s;
+}
+
+/* ============ ПРОДУКТЫ ============ */
+function renderShop(){
+  const box=document.getElementById('shopList');box.innerHTML='';
+  let done=0,tot=0;
+  Object.keys(BASKET).forEach(cat=>{
+    const c=BASKET[cat];
+    const w=document.createElement('div');w.className='gcat';
+    w.innerHTML=`<div class="gh"><span class="ge">${c.e}</span>${cat}</div>`;
+    c.items.forEach(it=>{
+      tot++;
+      const id=cat+'·'+it[0];const ck=!!store.shop[id];if(ck)done++;
+      const row=document.createElement('div');row.className='gitem'+(ck?' ck':'');
+      row.onclick=()=>{store.shop[id]=!store.shop[id];save();renderShop()};
+      row.innerHTML=`<div class="gbox"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+        <span class="gname">${it[0]}</span>${it[1]?`<span class="gq">${it[1]}</span>`:''}`;
+      w.appendChild(row);
+    });
+    box.appendChild(w);
+  });
+  document.getElementById('shopSub').textContent= done?`собрано ${done} из ${tot}`:`${tot} позиций на неделю`;
+  document.getElementById('cookTable').innerHTML=COOK.map(r=>`<tr><td class="t" style="width:80px">${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+}
+function checkAllShop(){Object.keys(BASKET).forEach(cat=>BASKET[cat].items.forEach(it=>store.shop[cat+'·'+it[0]]=true));save();renderShop()}
+function resetShop(){store.shop={};save();renderShop();toast('Список очищен')}
+
+/* ============ НАВИГАЦИЯ ============ */
+function show(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));
+  document.getElementById('view-'+v).classList.add('on');
+  document.getElementById('tab-'+v).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+let toastT;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1900)}
+
+/* init */
+renderToday();renderProgram();renderFood();renderShop();
+</script>
+</body>
+</html>
